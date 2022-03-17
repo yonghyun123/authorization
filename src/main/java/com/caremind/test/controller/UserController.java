@@ -2,28 +2,33 @@ package com.caremind.test.controller;
 
 import com.caremind.test.dto.TokenDto;
 import com.caremind.test.dto.UserDto;
+import com.caremind.test.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 public class UserController {
+    private final UserService userService;
 
     /**
      * 사용자를 가입한다.
      * @param userDto
      * @return
      */
-    @PostMapping("/users")
+    @PostMapping("/users/new")
     @ResponseBody
     public ResponseEntity<UserDto> insert(@RequestBody UserDto userDto) {
         if(StringUtils.isEmpty(userDto.getUsername()) || StringUtils.isEmpty(userDto.getPassword())) {
             throw new RuntimeException("Required username and password");
         }
-        int id = 1; // user Id 정보 가지고 오는 구조 개발
+        int insert = userService.insert(userDto);
+
         UserDto dto = new UserDto();
-        dto.setId(id);
+        dto.setId(insert);
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
