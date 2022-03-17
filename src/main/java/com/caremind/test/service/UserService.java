@@ -5,14 +5,15 @@ import com.caremind.test.exception.DuplicatedIdException;
 import com.caremind.test.repository.UserRepository;
 import com.caremind.test.utils.SHA256Encrypt;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional(readOnly = true)
 public class UserService {
-
     private final UserRepository userRepository;
     /**
      * 회원검색
@@ -35,7 +36,6 @@ public class UserService {
             throw new DuplicatedIdException("중복된 아이디가 존재합니다.");
         }
         user.setPassword(SHA256Encrypt.encryptSHA256(user.getPassword()));
-
         return userRepository.insert(user);
     }
 

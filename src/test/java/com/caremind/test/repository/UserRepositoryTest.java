@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class UserRepositoryTest {
@@ -20,13 +19,11 @@ class UserRepositoryTest {
 
     @Test
     @Transactional
-//    @Rollback(value = false)
+    @Rollback(value = false)
     void 회원가입_테스트(){
 
         //given
-        UserDto user = new UserDto();
-        user.setUsername("aaa");
-        user.setPassword("123123");
+        UserDto user = getUser();
 
         //when
         int insert = userRepository.insert(user);
@@ -37,6 +34,9 @@ class UserRepositoryTest {
         Assertions.assertThat(user.getUsername()).isEqualTo(user1.getUsername());
     }
 
+    private UserDto getUser() {
+        return UserDto.builder().username("lee").password("123123").build();
+    }
 
 
 }
