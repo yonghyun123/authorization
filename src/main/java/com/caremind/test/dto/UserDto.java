@@ -2,9 +2,11 @@ package com.caremind.test.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Builder
 public class UserDto {
     private int id;
     private String username;
@@ -32,5 +34,9 @@ public class UserDto {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public static boolean hasNullData(UserDto user){
+        return user.getUsername() == null || user.getPassword() == null;
     }
 }

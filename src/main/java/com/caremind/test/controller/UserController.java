@@ -22,14 +22,13 @@ public class UserController {
     @PostMapping("/users/new")
     @ResponseBody
     public ResponseEntity<UserDto> insert(@RequestBody UserDto userDto) {
-        if(StringUtils.isEmpty(userDto.getUsername()) || StringUtils.isEmpty(userDto.getPassword())) {
-            throw new RuntimeException("Required username and password");
+        if(UserDto.hasNullData(userDto)) {
+            throw new NullPointerException("Required username and password");
         }
         int insert = userService.insert(userDto);
+        UserDto user = UserDto.builder().id(insert).build();
 
-        UserDto dto = new UserDto();
-        dto.setId(insert);
-        return ResponseEntity.status(HttpStatus.OK).body(dto);
+        return new ResponseEntity<UserDto>(user, HttpStatus.OK);
     }
 
     /**

@@ -29,8 +29,7 @@ public class UserRepository {
                 user.getPassword()
         );
         if (re == 1) {
-            int userId =1 ;// 저장한 사용자의 아이디 가지고 오기
-            return userId;
+            return findUser(user.getUsername()).getId();
         } else {
             throw new RuntimeException("inert error");
         }
@@ -40,9 +39,9 @@ public class UserRepository {
     public UserDto findUser(String username) {
         return this.jdbcTemplate.queryForObject("select * from users where user_name = ?", new String[]{username},
                 (resultSet, i) -> {
-                    UserDto user = new UserDto();
-                    user.setId(resultSet.getInt("id"));
-                    user.setUsername(resultSet.getString("user_name"));
+                    UserDto user = UserDto.builder().id(resultSet.getInt("id"))
+                            .username(resultSet.getString("user_name"))
+                            .build();
                     log.info("user = {}",user);
                     return user;
                 }
