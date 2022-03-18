@@ -1,14 +1,14 @@
 package com.caremind.test.repository;
 
+import com.caremind.test.dto.TokenDto;
 import com.caremind.test.dto.UserDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.List;
+
 
 @Repository
 @Slf4j
@@ -35,14 +35,47 @@ public class UserRepository {
         }
     }
 
+    public void insertToken(int userId, String token) {
+        this.jdbcTemplate.update("insert into token (user_id, token) values (?,?)",
+                userId,
+                token
+        );
+    }
+
+    public TokenDto findToken(int userId) {
+        return this.jdbcTemplate.queryForObject("select * from token where user_id = ?", new Integer[]{userId},
+                (resultSet, i) -> {
+                    TokenDto token = TokenDto.builder().id(resultSet.getInt("user_id"))
+                            .token(resultSet.getString("token"))
+                            .build();
+                    return token;
+                }
+        );
+    }
+
 
     public UserDto findUser(String username) {
-        return this.jdbcTemplate.queryForObject("select * from users where user_name = ?", new String[]{username},
+        List<UserDto> userDto = this.jdbcTemplate.query("select * from users where user_name = ?", new String[]{username},
                 (resultSet, i) -> {
                     UserDto user = UserDto.builder().id(resultSet.getInt("id"))
                             .username(resultSet.getString("user_name"))
                             .build();
-                    log.info("user = {}",user);
+                    log.info("user = {}", user);
+                    return user;
+                }
+        );
+        return userDto.isEmpty() ? null : userDto.get(0);
+
+    }
+
+    public UserDto findByNameAndPassword(String username, String encPasswd) {
+        return this.jdbcTemplate.queryForObject("select * from users where user_name = ? and password = ?"
+                , new String[]{username, encPasswd}
+                , (resultSet, i) -> {
+                    UserDto user = UserDto.builder().id(resultSet.getInt("id"))
+                            .username(resultSet.getString("user_name"))
+                            .build();
+                    log.info("user = {}", user);
                     return user;
                 }
         );
