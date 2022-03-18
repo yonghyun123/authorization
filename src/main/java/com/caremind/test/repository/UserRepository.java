@@ -53,7 +53,6 @@ public class UserRepository {
         );
     }
 
-
     public UserDto findUser(String username) {
         List<UserDto> userDto = this.jdbcTemplate.query("select * from users where user_name = ?", new String[]{username},
                 (resultSet, i) -> {
